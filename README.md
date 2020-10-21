@@ -1,1 +1,2 @@
-# tareaSO2
+Readme chiquito :D
+
