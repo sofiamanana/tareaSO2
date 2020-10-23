@@ -39,18 +39,85 @@ void crearTablero(struct cuadrado * tablero){
     
 }
 
+void printTablero(struct cuadrado * tablero){
+    printf("------------------\n");
+    for(int i = 0; i<29; i++){
+        if(tablero[i].efecto == 1){
+            if(tablero[i].jugadores[0] == i){
+                printf("| 1");
+            }
+            else{
+                printf("| ? ");
+            }
+            
+        }
+        else if(tablero[i].efecto == 2){
+            if(tablero[i].jugadores[0] == i){
+                printf("| 1");
+            }else{
+                printf("| ?? ");
+            }            
+        }
+        else if(tablero[i].efecto == 3){
+            if(tablero[i].jugadores[0] == i){
+                printf("| 1");
+            }else{
+                printf("|  \n");
+            }
+            
+        }
+        else if(tablero[i].efecto == 4){
+            if(tablero[i].jugadores[0] == i){
+                printf("| 1");
+            }else{
+                printf("| inicio");
+            }
+            
+        }
+        else{
+            if(tablero[i].jugadores[0] == i){
+                printf("| 1");
+            }else{
+                printf("|  ");
+            }            
+        }
+    }
+}
+
 int main(){
     FILE *fp;
     fp = fopen("/tmp/comp","w+");
     int mem=0;
     key_t clave;
     clave = ftok("/tmp/comp",123);
-    
+    int id = 0;
     struct cuadrado * tablero = NULL;
     mem = shmget(clave,sizeof(tablero)+1,0777 | IPC_CREAT);
     printf("%d\n",mem);
     tablero = (struct cuadrado *) shmat(mem,NULL,0); 
     crearTablero(tablero);
-    printf("%d\n",tablero[18].efecto);
+    //printTablero(tablero);
+/*
+     for (int i = 1; i<4;i++){       //crear los procesos hijos (3)
+        if (fork() == 0){
+            id = i;
+            break;
+        }
+    }*/
+    int p[2];
+    char leer[6];
+    pipe(p);
+    if(fork() == 0){
+        id = 1;
+    }
+    if(id==0){
+        close(p[0]);
+        write(p[1],"55",1);
+    }
+    else if (id==1){
+        close(p[1]);
+        read(p[0],leer,1);
+        printf("%s\n",leer);
+    }
     return 0;
 }
