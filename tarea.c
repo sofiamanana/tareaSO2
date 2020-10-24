@@ -97,27 +97,26 @@ int main(){
     tablero = (struct cuadrado *) shmat(mem,NULL,0); 
     crearTablero(tablero);
     //printTablero(tablero);
-/*
-     for (int i = 1; i<4;i++){       //crear los procesos hijos (3)
-        if (fork() == 0){
-            id = i;
+    int pid;
+    for (int i = 0; i<3;i++){   
+        pid = fork();
+        if(pid == 0){
+            id = i+1;
             break;
         }
-    }*/
-    int p[2];
-    char leer[6];
-    pipe(p);
-    if(fork() == 0){
-        id = 1;
     }
     if(id==0){
-        close(p[0]);
-        write(p[1],"55",1);
+        printf("soy el proceso padre\n");
     }
-    else if (id==1){
-        close(p[1]);
-        read(p[0],leer,1);
-        printf("%s\n",leer);
+    else if(id==1){
+        printf("soy el proceso 1\n");
+    }
+    
+    else if(id==2){
+        printf("soy el proceso 2\n");
+    }
+    else if(id==3){
+        printf("soy el proceso 3\n");
     }
     return 0;
 }
