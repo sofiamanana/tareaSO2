@@ -4,7 +4,6 @@
 #include <string.h>
 #include <limits.h>
 #include <unistd.h>
-#include <time.h>
 
 struct cuadrado { 
     int efecto;  
@@ -79,11 +78,53 @@ int tirarDado(){
     return num;
 }
 
-void signo1(struct cuadrado *tablero, int nuevapos){
+void signo1(struct cuadrado *tablero, int *pos, int id){
+    int num = rand()%5+1;
+    if(num==1){
+        //retrocede 1 cuadricula(no sobrepasar el inicio)
+        int n_pos = pos[id]-1;
+        if(n_pos<0){
+            pos[id]=0;
+        }else{
+            pos[id]=n_pos;
+        }
+    }
+    else if(num==2){
+        //todos los jugadores (excepto el del turno) retroceden una cuadricula(no sobrepasar el inicio)
+        for(int i=0; i<4; i++){
+            if(id==i){
+                continue;
+            }
+            else{
+                int n_pos = pos[i]-1;
+                if(n_pos<0){
+                    pos[i]=0;
+                }else{
+                    pos[i]=n_pos;
+                }
+            }
+        }
+    }
+    else if(num==3){
+        //el jugador avanza una cuadricula
+        int n_pos = pos[id]+1;
+        if(n_pos>=28){
+            //gano
+        }else{
+            pos[id]=n_pos;
+        }
+    }
+    else if(num==4){
+        //el siguiente jugador pierde el turno
+    }
+    else if(num==5){
+        //cambia el sentido de los turnos
+    }
 
 }
 
-void signo2(struct cuadrado *tablero, int nuevapos){
+void signo2(struct cuadrado *tablero, int nuevapos, int id){
+    
 
 }
 
@@ -91,6 +132,7 @@ void moverJugador(struct cuadrado *tablero, int *pos, int id){
     int dado = tirarDado();
     int pos_jugador = pos[id];
     int nueva_pos = pos_jugador+dado;
+    pos[id]=nueva_pos;
     if(nueva_pos>=28){
         //gano
     }
@@ -174,5 +216,8 @@ int main(){
         close(da[0]);
     }
 
+    
+    fclose(fp);
+    fclose(fp2);
     return 0;
 }
