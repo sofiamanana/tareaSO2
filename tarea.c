@@ -130,8 +130,13 @@ int signo1(struct cuadrado *tablero, int *pos, int id){
         return 2;
     }
     else if(num==5){
-        //cambia el sentido de los turnos
+        //cambia el sentido de los turnos  READY
         printf("Se cambia el sentido de los turnos!\n");
+        if(pos[6]==0){
+            pos[6]=1;
+        }else{
+            pos[6]=0;
+        }
         return 3;
     }
 
@@ -369,7 +374,13 @@ int main(){
                     write(ab[1],"2",1);
                 }
                 else if(opc==3){
-                    write(ab[1],"3",1);
+                    if(pos[6]==0){
+                        write(ab[1],"1",1);
+                    }
+                    else{
+                        write(ab[1],"3",1);
+                    }
+                    
                 }
                 else if(opc==0){
                     break;
@@ -392,7 +403,12 @@ int main(){
                         write(ab[1],"2",1);
                     }
                     else if(opc==3){
-                        write(ab[1],"3",1);
+                        if(pos[6]==0){
+                            write(ab[1],"1",1);
+                        }
+                        else{
+                            write(ab[1],"3",1);
+                        }
                     }
                     else if(opc==0){
                         break;
@@ -424,7 +440,12 @@ int main(){
                     write(bc[1],"2",1);
                 }
                 else if(opc==3){
-                    write(bc[1],"3",1);
+                    if(pos[6]==0){
+                        write(bc[1],"1",1);
+                    }
+                    else{
+                        write(bc[1],"3",1);
+                    }
                 }
                 else if(opc==0){
                     break;
@@ -455,7 +476,12 @@ int main(){
                     write(cd[1],"2",1);
                 }
                 else if(opc==3){
-                    write(cd[1],"3",1);
+                    if(pos[6]==0){
+                        write(cd[1],"1",1);
+                    }
+                    else{
+                        write(cd[1],"3",1);
+                    }
                 }
                 else if(opc==0){
                     break;
@@ -486,7 +512,12 @@ int main(){
                     write(da[1],"2",1);
                 }
                 else if(opc==3){
-                    write(da[1],"3",1);
+                    if(pos[6]==0){
+                        write(da[1],"1",1);
+                    }
+                    else{
+                        write(da[1],"3",1);
+                    }
                 }
                 else if(opc==0){
                     break;
