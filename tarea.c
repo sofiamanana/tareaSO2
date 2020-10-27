@@ -4,6 +4,7 @@
 #include <string.h>
 #include <limits.h>
 #include <unistd.h>
+#include <time.h>
 
 struct cuadrado { 
     int efecto;  
@@ -75,14 +76,16 @@ void printTablero(struct cuadrado * tablero){
 }*/
 
 int tirarDado(){
-    int num = rand()%6+1;
+    //int num = 1+(int)(((5-0+1.0)*rand())/(INT_MAX+1.0));
+    int num = 2;
     return num;
 }
 
 int signo1(struct cuadrado *tablero, int *pos, int id){
-    int num = rand()%5+1;
+    //int num = 0+(int)(((4-0+1.0)*rand())/(INT_MAX+1.0));
+    int num = 5;
     if(num==1){
-        //retrocede 1 cuadricula(no sobrepasar el inicio)
+        //retrocede 1 cuadricula(no sobrepasar el inicio) READY
         printf("Retrocedes una casilla\n");
         int n_pos = pos[id]-1;
         if(n_pos<0){
@@ -93,7 +96,7 @@ int signo1(struct cuadrado *tablero, int *pos, int id){
         return 1;
     }
     else if(num==2){
-        //todos los jugadores (excepto el del turno) retroceden una cuadricula(no sobrepasar el inicio)
+        //todos los jugadores (excepto el del turno) retroceden una cuadricula(no sobrepasar el inicio) READY
         printf("Todos retroceden una casilla\n");
         for(int i=0; i<4; i++){
             if(id==i){
@@ -111,7 +114,7 @@ int signo1(struct cuadrado *tablero, int *pos, int id){
         return 1;
     }
     else if(num==3){
-        //el jugador avanza una cuadricula
+        //el jugador avanza una cuadricula READY
         printf("Avanzaste una cuadricula\n");
         int n_pos = pos[id]+1;
         if(n_pos>=28){
@@ -122,19 +125,20 @@ int signo1(struct cuadrado *tablero, int *pos, int id){
         return 1;
     }
     else if(num==4){
-        //el siguiente jugador pierde el turno
+        //el siguiente jugador pierde el turno  READY
         printf("El siguiente jugador pierde el turno\n");
         return 2;
     }
     else if(num==5){
         //cambia el sentido de los turnos
-        return 1;
+        printf("Se cambia el sentido de los turnos!\n");
+        return 3;
     }
 
 }
 
 int signo2(struct cuadrado *tablero, int *pos, int id){
-    int num = rand()%10+1;
+    int num = 0+(int)(((9-0+1.0)*rand())/(INT_MAX+1.0));
     if(num==1 || num==2 || num==3){
         printf("Todos retroceden dos cuadriculas\n");
         for(int i=0; i<4; i++){
@@ -354,6 +358,9 @@ int main(){
             if(k==0){
                 printf("Turno del jugador 1\n");
                 int opc = moverJugador(tablero,pos,id);
+                for(int j = 0; j<4; j++){
+                    printf("pos %d: %d\n",j,pos[j]);
+                }
                 k=1;
                 if(opc==1){
                     write(ab[1],"1",1);    
@@ -361,87 +368,136 @@ int main(){
                 else if(opc==2){ //se salta un turno
                     write(ab[1],"2",1);
                 }
+                else if(opc==3){
+                    write(ab[1],"3",1);
+                }
                 else if(opc==0){
                     break;
                 }
             }
             else{
                 read(da[0],leer,1);
-                if(strcmp(leer,"1\n")!=0){
+                printf("leer: %s\n",leer);
+                if(strcmp(leer,"1")==0){
                     printf("Turno del jugador 1\n");
                     int opc = moverJugador(tablero,pos,id);
+                    for(int j = 0; j<4; j++){
+                        printf("pos %d: %d\n",j,pos[j]);
+                    }
                     if(opc==1){
                         write(ab[1],"1",1);    
                     }
                     else if(opc==2){ //se salta un turno
+                        
                         write(ab[1],"2",1);
+                    }
+                    else if(opc==3){
+                        write(ab[1],"3",1);
                     }
                     else if(opc==0){
                         break;
                     }
                 }
-                else if(strcmp(leer,"2\n")!=0){
+                else if(strcmp(leer,"3")==0){
+                    write(ab[1],"2",1);
+                }
+                else if(strcmp(leer,"2")==0){
+                    printf("AAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
                     write(ab[1],"1",1);
                 }
             }
         }
         else if(id==1){ //JUGADOR 2
             read(ab[0],leer,1);
-            if(strcmp(leer,"1\n")!=0){
+            printf("leer: %s\n",leer);
+            if(strcmp(leer,"1")==0){
                 printf("Turno del jugador 2\n");
                 int opc = moverJugador(tablero,pos,id);
+
+                for(int j = 0; j<4; j++){
+                    printf("pos %d: %d\n",j,pos[j]);
+                }
                 if(opc==1){
                     write(bc[1],"1",1);    
                 }
                 else if(opc==2){ //se salta un turno
                     write(bc[1],"2",1);
                 }
+                else if(opc==3){
+                    write(bc[1],"3",1);
+                }
                 else if(opc==0){
                     break;
                 }
                 
             }
-            else if(strcmp(leer,"2\n")!=0){
+            else if(strcmp(leer,"3")==0){
+                write(bc[1],"2",1);
+            }
+            else if(strcmp(leer,"2")==0){
+                printf("AAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
                 write(bc[1],"1",1);
             }
         }
         else if(id==2){ //JUGADOR 3
             read(bc[0],leer,1);
-            if(strcmp(leer,"1\n")!=0){
+            printf("leer: %s\n",leer);
+            if(strcmp(leer,"1")==0){
                 printf("Turno del jugador 3\n");
                 int opc = moverJugador(tablero,pos,id);
+                for(int j = 0; j<4; j++){
+                    printf("pos %d: %d\n",j,pos[j]);
+                }
                 if(opc==1){
                     write(cd[1],"1",1);    
                 }
                 else if(opc==2){ //se salta un turno
                     write(cd[1],"2",1);
                 }
+                else if(opc==3){
+                    write(cd[1],"3",1);
+                }
                 else if(opc==0){
                     break;
                 }
                 
             }
-            else if(strcmp(leer,"2\n")!=0){
+            else if(strcmp(leer,"3")==0){
+                write(cd[1],"2",1);
+            }
+            else if(strcmp(leer,"2")==0){
+                printf("AAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
                 write(cd[1],"1",1);
             }
         }
         else if(id==3){ //JUGADOR 4
             read(cd[0],leer,1);
-            if(strcmp(leer,"1\n")!=0){
+            printf("leer: %s\n",leer);
+            if(strcmp(leer,"1")==0){
                 printf("Turno del jugador 4\n");
                 int opc = moverJugador(tablero,pos,id);
+                for(int j = 0; j<4; j++){
+                    printf("pos %d: %d\n",j,pos[j]);
+                }
                 if(opc==1){
                     write(da[1],"1",1);    
                 }
                 else if(opc==2){ //se salta un turno
                     write(da[1],"2",1);
                 }
+                else if(opc==3){
+                    write(da[1],"3",1);
+                }
                 else if(opc==0){
                     break;
                 }
                 
             }
-            else if(strcmp(leer,"2\n")!=0){
+            else if(strcmp(leer,"3")==0){
+                write(da[1],"2",1);
+            }
+            else if(strcmp(leer,"2")==0){
+                printf("AAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
                 write(da[1],"1",1);
             }
         }
