@@ -21,8 +21,11 @@ void crearTablero(struct cuadrado * tablero){
         else if(i==8 || i==10 || i==18 || i==20){
             tablero[i].efecto = 3;
         }
-        else if(i==0 || i==28){
+        else if(i==0){
             tablero[i].efecto = 4;
+        }
+        else if(i==28){
+            tablero[i].efecto = 5;
         }
         else{
             tablero[i].efecto = 0;
@@ -30,51 +33,43 @@ void crearTablero(struct cuadrado * tablero){
     }
     
 }
-/*
-void printTablero(struct cuadrado * tablero){
+
+void printTablero(struct cuadrado * tablero,int *pos){
     printf("------------------\n");
+    printf("|");
     for(int i = 0; i<29; i++){
-        if(tablero[i].efecto == 1){
-            if(tablero[i].jugadores[0] == i){
-                printf("| 1");
-            }
-            else{
-                printf("| ? ");
-            }
+        if(pos[0]==i){
+            printf("1 ");
         }
-        else if(tablero[i].efecto == 2){
-            if(tablero[i].jugadores[0] == i){
-                printf("| 1");
-            }else{
-                printf("| ?? ");
-            }            
+        if(pos[1]==i){
+            printf("2 ");
         }
-        else if(tablero[i].efecto == 3){
-            if(tablero[i].jugadores[0] == i){
-                printf("| 1");
-            }else{
-                printf("|  \n");
-            }
-            
+        if(pos[2]==i){
+            printf("3 ");
         }
-        else if(tablero[i].efecto == 4){
-            if(tablero[i].jugadores[0] == i){
-                printf("| 1");
-            }else{
-                printf("| inicio");
-            }
-            
+        if(pos[3]==i){
+            printf("4 ");
         }
-        else{
-            if(tablero[i].jugadores[0] == i){
-                printf("| 1");
-            }else{
-                printf("|  ");
-            }            
+        if(tablero[i].efecto==0){
+            printf(" |");
+        }else if(tablero[i].efecto==1){
+            printf("?|");
+        }
+        else if(tablero[i].efecto==2){
+            printf("??|");
+        }
+        else if(tablero[i].efecto==3){
+            printf("->|\n|");
+        }
+        else if(tablero[i].efecto==4){
+            printf("inicio|");
+        }
+        else if(tablero[i].efecto==5){
+            printf("fin|");
         }
     }
-}*/
-
+    printf("\n");
+}
 int tirarDado(){
     //int num = 1+(int)(((5-0+1.0)*rand())/(INT_MAX+1.0));
     int num = 2;
@@ -248,7 +243,6 @@ int signo2(struct cuadrado *tablero, int *pos, int id){
 
 int moverJugador(struct cuadrado *tablero, int *pos, int id){
     int dado = tirarDado();
-    printf("Dado: %d\n",dado);
     int pos_jugador = pos[id];
     int nueva_pos = pos_jugador+dado;
     pos[id]=nueva_pos;
@@ -259,6 +253,7 @@ int moverJugador(struct cuadrado *tablero, int *pos, int id){
         pos[5]=0;
         printf("Ganoo...Termino turno, presiones 0 para continuar\n");
         scanf("%d",&enter);
+        printTablero(tablero,pos);
         return 0;
     }
     else if(tablero[nueva_pos].efecto==1){
@@ -266,8 +261,8 @@ int moverJugador(struct cuadrado *tablero, int *pos, int id){
         pos[id]=nueva_pos;
         int ret = signo1(tablero,pos,id);
         printf("?...Termino turno, presiones 0 para continuar\n");
-        printf("ret: %d\n",ret);
         scanf("%d",&enter);
+        printTablero(tablero,pos);
         return ret;
     }
     else if(tablero[nueva_pos].efecto==2){
@@ -275,8 +270,8 @@ int moverJugador(struct cuadrado *tablero, int *pos, int id){
         pos[id]=nueva_pos;
         int ret = signo2(tablero, pos, id);
         printf("??...Termino turno, presiones 0 para continuar\n");
-        printf("ret: %d\n",ret);
         scanf("%d",&enter);
+        printTablero(tablero,pos);
         return ret;
     }
     else if(tablero[nueva_pos].efecto==4){
@@ -284,12 +279,14 @@ int moverJugador(struct cuadrado *tablero, int *pos, int id){
         pos[id]=nueva_pos;
         printf("Ganooo...Termino turno, presiones 0 para continuar\n");
         scanf("%d",&enter);
+        printTablero(tablero,pos);
         return 0;
     }
     else if(tablero[nueva_pos].efecto==0){
         pos[id]=nueva_pos;
         printf("Celda blanca...Termino turno, presiones 0 para continuar\n");
         scanf("%d",&enter);
+        printTablero(tablero,pos);
         return 1;
     }
 }
@@ -314,21 +311,25 @@ int main(){
     char leer[1];
     
     crearTablero(tablero);
-    //printTablero(tablero);
+
     for(int i=0; i<4; i++){
         pos[i]=0;
     }
     pos[5]=100; //flag de salida
-    pos[6]=0;   //flag de saltar turno
+    pos[6]=0;   //flag de cambiar orden de turnos
 
-    //ARREGLAR Y PONER EXCEPCIONES
-    int a = pipe(ab);
-    if(a==-1){
+    if(pipe(ab)==-1){
         printf("fallo pipe");
     }
-    pipe(bc);
-    pipe(cd);
-    pipe(da);
+    if(pipe(bc)==-1){
+        printf("fallo pipe");
+    }
+    if(pipe(cd)==-1){
+        printf("fallo pipe");
+    }
+    if(pipe(da)==-1){
+        printf("fallo pipe");
+    }
 
     int pid;
     for (int i = 0; i<3;i++){   
@@ -362,10 +363,8 @@ int main(){
         if(id==0){  //JUGADOR 1
             if(k==0){
                 printf("Turno del jugador 1\n");
+                printTablero(tablero,pos);
                 int opc = moverJugador(tablero,pos,id);
-                for(int j = 0; j<4; j++){
-                    printf("pos %d: %d\n",j,pos[j]);
-                }
                 k=1;
                 if(opc==1){
                     write(ab[1],"1",1);    
@@ -388,13 +387,9 @@ int main(){
             }
             else{
                 read(da[0],leer,1);
-                printf("leer: %s\n",leer);
                 if(strcmp(leer,"1")==0){
                     printf("Turno del jugador 1\n");
                     int opc = moverJugador(tablero,pos,id);
-                    for(int j = 0; j<4; j++){
-                        printf("pos %d: %d\n",j,pos[j]);
-                    }
                     if(opc==1){
                         write(ab[1],"1",1);    
                     }
@@ -418,21 +413,15 @@ int main(){
                     write(ab[1],"2",1);
                 }
                 else if(strcmp(leer,"2")==0){
-                    printf("AAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
                     write(ab[1],"1",1);
                 }
             }
         }
         else if(id==1){ //JUGADOR 2
             read(ab[0],leer,1);
-            printf("leer: %s\n",leer);
             if(strcmp(leer,"1")==0){
                 printf("Turno del jugador 2\n");
                 int opc = moverJugador(tablero,pos,id);
-
-                for(int j = 0; j<4; j++){
-                    printf("pos %d: %d\n",j,pos[j]);
-                }
                 if(opc==1){
                     write(bc[1],"1",1);    
                 }
@@ -456,19 +445,14 @@ int main(){
                 write(bc[1],"2",1);
             }
             else if(strcmp(leer,"2")==0){
-                printf("AAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
                 write(bc[1],"1",1);
             }
         }
         else if(id==2){ //JUGADOR 3
             read(bc[0],leer,1);
-            printf("leer: %s\n",leer);
             if(strcmp(leer,"1")==0){
                 printf("Turno del jugador 3\n");
                 int opc = moverJugador(tablero,pos,id);
-                for(int j = 0; j<4; j++){
-                    printf("pos %d: %d\n",j,pos[j]);
-                }
                 if(opc==1){
                     write(cd[1],"1",1);    
                 }
@@ -492,19 +476,14 @@ int main(){
                 write(cd[1],"2",1);
             }
             else if(strcmp(leer,"2")==0){
-                printf("AAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
                 write(cd[1],"1",1);
             }
         }
         else if(id==3){ //JUGADOR 4
             read(cd[0],leer,1);
-            printf("leer: %s\n",leer);
             if(strcmp(leer,"1")==0){
                 printf("Turno del jugador 4\n");
                 int opc = moverJugador(tablero,pos,id);
-                for(int j = 0; j<4; j++){
-                    printf("pos %d: %d\n",j,pos[j]);
-                }
                 if(opc==1){
                     write(da[1],"1",1);    
                 }
@@ -528,7 +507,6 @@ int main(){
                 write(da[1],"2",1);
             }
             else if(strcmp(leer,"2")==0){
-                printf("AAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
                 write(da[1],"1",1);
             }
         }
