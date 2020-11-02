@@ -110,7 +110,7 @@ int signo1(struct cuadrado *tablero, int *pos, int id){
     srand(getpid());
     int num = 0+(int)(((4-0+1.0)*rand())/(INT_MAX+1.0));
     if(num==0){
-        //retrocede 1 cuadricula(no sobrepasar el inicio) READY
+        //retrocede 1 cuadricula
         printf("Retrocedes una casilla\n");
         int n_pos = pos[id]-1;
         if(n_pos<0){
@@ -121,7 +121,7 @@ int signo1(struct cuadrado *tablero, int *pos, int id){
         return 1;
     }
     else if(num==1){
-        //todos los jugadores (excepto el del turno) retroceden una cuadricula(no sobrepasar el inicio) READY
+        //todos los jugadores retroceden una cuadricula
         printf("Todos retroceden una casilla\n");
         for(int i=0; i<4; i++){
             if(id==i){
@@ -139,7 +139,7 @@ int signo1(struct cuadrado *tablero, int *pos, int id){
         return 1;
     }
     else if(num==2){
-        //el jugador avanza una cuadricula READY
+        //el jugador avanza una cuadricula 
         printf("Avanzaste una cuadricula\n");
         int n_pos = pos[id]+1;
         if(n_pos>=28){
@@ -150,12 +150,12 @@ int signo1(struct cuadrado *tablero, int *pos, int id){
         return 1;
     }
     else if(num==3){
-        //el siguiente jugador pierde el turno  READY
+        //el siguiente jugador pierde el turno  
         printf("El siguiente jugador pierde el turno\n");
         return 2;
     }
     else if(num==4){
-        //cambia el sentido de los turnos  READY
+        //cambia el sentido de los turnos  
         printf("Se cambia el sentido de los turnos\n");
         if(pos[6]==0){
             pos[6]=1;
@@ -178,7 +178,7 @@ de pregunta, cada una con su respectiva probabilidad de ocurrencia.
 int signo2(struct cuadrado *tablero, int *pos, int id){
     srand(getpid());
     int num = 0+(int)(((9-0+1.0)*rand())/(INT_MAX+1.0));
-    if(num==0 || num==1 || num==1){
+    if(num==0 || num==1 || num==1){ //Todos retroceden dos cuadriculas
         printf("Todos retroceden dos cuadriculas\n");
         for(int i=0; i<4; i++){
             int n_pos = pos[i]-2;
@@ -190,7 +190,7 @@ int signo2(struct cuadrado *tablero, int *pos, int id){
         }
         return 1;
     }
-    else if(num==3 || num==4){
+    else if(num==3 || num==4){ //Todos avanzan hasta la cuadricula blanca mas cercana
         printf("Todos avanzan hasta la cuadricula blanca mas cercana\n");
         for(int i=0; i<4; i++){
             int flag=0;
@@ -207,7 +207,7 @@ int signo2(struct cuadrado *tablero, int *pos, int id){
         }
         return 1;
     }
-    else if(num==5 || num==6){
+    else if(num==5 || num==6){ //El jugador cambia de lugar con el jugador que va en el ultimo lugar
         printf("El jugador cambia de lugar con el jugador que va en el ultimo lugar\n");
         int flag=0;
         int aux;
@@ -235,7 +235,7 @@ int signo2(struct cuadrado *tablero, int *pos, int id){
         pos[lugar]=aux;
         return 1;
     }
-    else if(num==7 || num==8){
+    else if(num==7 || num==8){ //El jugador cambia de lugar con el jugador que va en primer lugar
         printf("El jugador cambia de lugar con el jugador que va en primer lugar\n");
         int flag=0;
         int aux;
@@ -263,7 +263,7 @@ int signo2(struct cuadrado *tablero, int *pos, int id){
         pos[lugar]=aux;
         return 1;
     }
-    else if(num==9){
+    else if(num==9){ //Se cambia el sentido del tablero
         printf("Se cambia de sentido el tablero\n");
         int i;
         for (i = 0; i<28;i++){
@@ -472,6 +472,7 @@ int main(){
                         }
                     }
                     else if(opc==0){
+                        write(ab[1],"0",1);
                         break;
                     }
                 }
@@ -480,6 +481,9 @@ int main(){
                 }
                 else if(strcmp(leer,"2")==0 && pos[5]==100){
                     write(ab[1],"1",1);
+                }
+                else if(strcmp(leer,"0")==0){
+                    break;
                 }
             }
         }
@@ -514,6 +518,7 @@ int main(){
                     }
                 }
                 else if(opc==0){
+                    write(bc[1],"0",1);
                     break;
                 }
                 
@@ -524,8 +529,11 @@ int main(){
             else if(strcmp(leer,"2")==0 && pos[5]==100){
                 write(bc[1],"1",1);
             }
+            else if(strcmp(leer,"0")==0){
+                break;
+            }
         }
-        else if(id==2){ //JUGADOR 3
+        else if(id==2){ //Jugador 3
             read(bc[0],leer,1);
             if(strcmp(leer,"1")==0 && pos[5]==100){
                 printf("Turno del jugador 3\n");
@@ -556,6 +564,7 @@ int main(){
                     }
                 }
                 else if(opc==0){
+                    write(cd[1],"0",1);
                     break;
                 }
                 
@@ -566,8 +575,11 @@ int main(){
             else if(strcmp(leer,"2")==0 && pos[5]==100){
                 write(cd[1],"1",1);
             }
+            else if(strcmp(leer,"0")==0) {
+                break;
+            }
         }
-        else if(id==3){ //JUGADOR 4
+        else if(id==3){ //Jugador 4
             read(cd[0],leer,1);
             if(strcmp(leer,"1")==0 && pos[5]==100){
                 printf("Turno del jugador 4\n");
@@ -598,6 +610,7 @@ int main(){
                     }
                 }
                 else if(opc==0){
+                    write(da[1],"0",1);
                     break;
                 }
                 
@@ -608,12 +621,19 @@ int main(){
             else if(strcmp(leer,"2")==0 && pos[5]==100){
                 write(da[1],"1",1);
             }
+            else if(strcmp(leer,"0")==0) {
+                break;
+            }
         }
     }
+
     if(id==0){
-        printf("Gano el jugador: %d!!! FELICIDADES!!!\n",id+1);
+        printf("Gano el jugador: %d!!! FELICIDADES!!!\n",pos[7]);
     }
-    
+    shmctl (mem, IPC_RMID,(struct shmid_ds *)NULL);
+    unlink ("/tmp/comp");
+    shmctl (mem2, IPC_RMID,(struct shmid_ds *)NULL);
+    unlink ("/tmp/comp2");
     fclose(fp);
     fclose(fp2);
     return 0;
